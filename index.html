@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Secuencia Don Árbol</title>
+    <!-- Agrega meta viewport para móviles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         html, body {
@@ -10,12 +12,15 @@
             margin: 0;
             padding: 0;
             background: #e8f5e9;
+            /* Elimina centrado y flex del body */
+            width: 100vw;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
         body {
+            /* Elimina flex y centrado */
+            width: 100vw;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
 
             /* Haz la animación de fade-in más rápida */
             opacity: 0;
@@ -25,36 +30,42 @@
             opacity: 1;
         }
         .arbol-chan-container {
+            /* Haz que ocupe toda la pantalla y se fije */
+            position: fixed;
+            top: 0; left: 0;
             width: 100vw;
             height: 100vh;
-            max-width: 430px;
-            max-height: 932px;
-            min-width: 320px;
-            min-height: 568px;
             background: url('Fondo texto.jpg') no-repeat center center;
             background-size: cover;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 20px 2px rgba(0,0,0,0.2);
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
+            justify-content: center;
+            align-items: center;
+            box-shadow: none;
+            border-radius: 0;
+            overflow: auto;
+            /* Elimina max/min width/height */
         }
         .arbol-chan-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            max-width: 350px;
+            width: 92vw;
+            max-width: 400px;
             margin: 0 auto;
+            padding: 2.5vh 0 2.5vh 0;
+            background: rgba(0,0,0,0.18);
+            border-radius: 18px;
+            box-shadow: 0 0 16px 2px rgba(0,0,0,0.12);
         }
         /* Imagen baja desde arriba */
         .arbol-chan-img {
-            width: 60vw;
-            max-width: 220px;
-            min-width: 120px;
-            margin-top: 0;
+            width: 44vw;
+            max-width: 180px;
+            min-width: 90px;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
             opacity: 0;
             transition: opacity 1.2s, transform 1.2s cubic-bezier(.77,0,.18,1);
             transform: translateY(-120px);
@@ -66,30 +77,30 @@
         .arbol-chan-titulo {
             font-family: 'Montserrat', Arial, sans-serif;
             color: #178a2c;
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: bold;
-            margin-top: 1.2rem;
-            margin-bottom: 0.7rem;
+            margin-top: 0.7rem;
+            margin-bottom: 0.5rem;
             text-align: center;
             text-shadow: 0 2px 12px #fff, 0 0 12px #178a2c, 2px 2px 0 #fff;
         }
         .arbol-chan-texto {
             color: #fff;
             font-family: 'Roboto', Arial, sans-serif;
-            font-size: 1.2rem;
-            margin-top: 0.5rem;
-            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+            margin-top: 0.3rem;
+            margin-bottom: 1rem;
             text-align: center;
             text-shadow: 0 2px 8px #000;
         }
         .btn-continuar {
-            margin-top: 0.5rem;
-            font-size: 1.2rem;
+            margin-top: 0.3rem;
+            font-size: 1.1rem;
             background: #178a2c;
             color: #fff;
             border: 2px solid #fff;
             border-radius: 8px;
-            padding: 0.7rem 2.5rem;
+            padding: 0.6rem 2rem;
             font-weight: bold;
             font-family: 'Montserrat', Arial, sans-serif;
             box-shadow: 0 2px 8px rgba(0,0,0,0.12);
