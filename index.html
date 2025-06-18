@@ -10,6 +10,7 @@
             height: 100%;
             margin: 0;
             padding: 0;
+            background: #e5e5e5; /* Simula el marco del celular */
         }
         body {
             min-height: 100vh;
@@ -17,28 +18,41 @@
             width: 100vw;
             height: 100vh;
             box-sizing: border-box;
-            background: #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            background: #e5e5e5; /* Simula el marco del celular */
         }
         .fade-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            max-width: 430px;
+            max-height: 932px;
+            min-width: 320px;
+            min-height: 568px;
+            aspect-ratio: 9/16;
             background: url('Fondo texto.jpg') no-repeat center center;
             background-size: cover;
             opacity: 0;
             transition: opacity 1.2s ease;
             z-index: 1;
+            border-radius: 32px;
+            box-shadow: 0 0 0 8px #2222, 0 8px 32px #0005;
         }
         .fade-bg.visible {
             opacity: 1;
         }
         .main-content {
-            position: relative;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
             z-index: 2;
             width: 100vw;
             height: 100vh;
@@ -54,6 +68,9 @@
             pointer-events: none;
             opacity: 0;
             margin: 0 auto;
+            border-radius: 32px;
+            box-shadow: 0 0 0 8px #2222, 0 8px 32px #0005;
+            background: #fff0;
         }
         .main-content.visible {
             opacity: 1;
@@ -121,12 +138,14 @@
             border: 2px solid #ffe44d;
         }
         @media (max-width: 430px) {
-            .main-content {
+            .main-content, .fade-bg {
                 max-width: 100vw;
                 max-height: 100vh;
                 min-width: 0;
                 min-height: 0;
                 aspect-ratio: 9/16;
+                border-radius: 0;
+                box-shadow: none;
             }
             .titulo-arbolito {
                 font-size: 2rem;
