@@ -2,8 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- Viewport optimizado para móviles -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Don Arbolito</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -11,10 +10,8 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            /* Evita scroll en móviles */
-            overflow-x: hidden;
-            overflow-y: hidden;
-            touch-action: manipulation;
+            background: #e5e5e5;
+            /* Simula borde de dispositivo */
         }
         body {
             min-height: 100vh;
@@ -22,29 +19,14 @@
             width: 100vw;
             height: 100vh;
             box-sizing: border-box;
-            background: #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             overflow: hidden;
         }
-        .fade-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: url('Fondo texto.jpg') no-repeat center center;
-            background-size: cover;
-            opacity: 0;
-            transition: opacity 1.2s ease;
-            z-index: 1;
-        }
-        .fade-bg.visible {
-            opacity: 1;
-        }
-        .main-content {
+        .mobile-frame {
             position: relative;
-            z-index: 2;
             width: 100vw;
             height: 100vh;
             max-width: 430px;
@@ -52,6 +34,34 @@
             min-width: 320px;
             min-height: 568px;
             aspect-ratio: 9/16;
+            background: #fff;
+            border-radius: 32px;
+            box-shadow: 0 0 32px 4px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fade-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('Fondo texto.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+            z-index: 1;
+            border-radius: 32px;
+        }
+        .fade-bg.visible {
+            opacity: 1;
+        }
+        .main-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -59,8 +69,6 @@
             pointer-events: none;
             opacity: 0;
             margin: 0 auto;
-            /* Añade padding para evitar que el contenido toque los bordes */
-            padding: 2.5vh 2vw;
         }
         .main-content.visible {
             opacity: 1;
@@ -70,7 +78,7 @@
         .arbolito-img {
             width: 60vw;
             max-width: 220px;
-            min-width: 100px;
+            min-width: 120px;
             margin-top: 0;
             opacity: 0;
             transform: translateY(-120px);
@@ -86,34 +94,32 @@
         }
         .titulo-arbolito {
             font-family: 'Montserrat', Arial, sans-serif;
-            font-size: 2.1rem;
+            font-size: 1.8rem; /* reducido */
             color: #178a2c;
             font-weight: bold;
             margin-top: 1.2rem;
             margin-bottom: 0.7rem;
             text-align: center;
             text-shadow: 0 2px 12px #fff, 0 0 12px #178a2c, 2px 2px 0 #fff;
-            line-height: 1.1;
         }
         .dialogo-arbolito {
             background: none;
             color: #fff;
             font-family: 'Roboto', Arial, sans-serif;
-            font-size: 1.05rem;
+            font-size: 0.95rem; /* reducido */
             margin-top: 0.5rem;
             margin-bottom: 1.2rem;
             text-align: center;
             text-shadow: 0 2px 8px #000;
             border-radius: 0;
             box-shadow: none;
-            padding: 0.2rem 0.5rem;
-            max-width: 95vw;
+            padding: 0;
+            max-width: 340px;
             border: none;
-            line-height: 1.3;
         }
         .btn-continuar {
             margin-top: 0.5rem;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             background: #178a2c;
             color: #fff;
             border: 2px solid #fff;
@@ -124,30 +130,25 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.12);
             cursor: pointer;
             transition: background 0.2s, border 0.2s;
-            width: 90vw;
-            max-width: 320px;
         }
         .btn-continuar:active {
             background: #176d13;
             border: 2px solid #ffe44d;
         }
         @media (max-width: 430px) {
-            .main-content {
+            .mobile-frame {
                 max-width: 100vw;
                 max-height: 100vh;
                 min-width: 0;
                 min-height: 0;
-                aspect-ratio: 9/16;
-                padding: 2vh 2vw;
+                border-radius: 0;
             }
             .titulo-arbolito {
-                font-size: 1.5rem;
-                margin-top: 0.7rem;
-                margin-bottom: 0.5rem;
+                font-size: 1.8rem; /* reducido aún más en móvil */
             }
             .dialogo-arbolito {
-                font-size: 0.98rem;
-                padding: 0.1rem 0.2rem;
+                font-size: 0.87rem; /* reducido aún más en móvil */
+                padding: 0;
                 max-width: 98vw;
             }
             .arbolito-img {
@@ -155,33 +156,21 @@
                 min-width: 80px;
                 max-width: 98vw;
             }
-            .btn-continuar {
-                font-size: 1rem;
-                padding: 0.6rem 1.5rem;
-                width: 96vw;
-                max-width: 98vw;
-            }
-        }
-        @media (max-width: 340px) {
-            .titulo-arbolito {
-                font-size: 1.1rem;
-            }
-            .dialogo-arbolito {
-                font-size: 0.85rem;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="fade-bg" id="fade-bg"></div>
-    <div class="main-content" id="main-content">
-        <img src="DonArbolito.png" class="arbolito-img" id="arbolito-img" alt="Don Arbolito" />
-        <div class="titulo-arbolito">Don Arbolito</div>
-        <div class="dialogo-arbolito" id="dialogo-arbolito">
-            “Estimado caballero, debo confesar que me resulta lamentable negarle la pista sin más...<br>
-            pero comprenderá usted que, en su noble búsqueda por el caché, los logros deben ganarse con honor y elegancia.”
+    <div class="mobile-frame">
+        <div class="fade-bg" id="fade-bg"></div>
+        <div class="main-content" id="main-content">
+            <img src="DonArbolito.png" class="arbolito-img" id="arbolito-img" alt="Don Arbolito" />
+            <div class="titulo-arbolito">Don Arbolito</div>
+            <div class="dialogo-arbolito" id="dialogo-arbolito">
+                “Estimado caballero, debo confesar que me resulta lamentable negarle la pista sin más...<br>
+                pero comprenderá usted que, en su noble búsqueda por el caché, los logros deben ganarse con honor y elegancia.”
+            </div>
+            <button class="btn-continuar" id="btn-continuar">Continuar</button>
         </div>
-        <button class="btn-continuar" id="btn-continuar">Continuar</button>
     </div>
     <script>
         // Paso 1: Fade-in del fondo
