@@ -256,9 +256,43 @@
     </div>
     <!-- PONG GAME ELEMENTS -->
     <div class="pong-bg" id="pong-bg" style="display:none;">
-        <div class="pong-container">
+        <div class="pong-container" style="position:relative;">
             <canvas id="pong-canvas" width="320" height="480"></canvas>
             <div class="pong-message" id="pong-message"></div>
+            <div id="pong-timer" style="
+                position:absolute;
+                color:#fff;
+                font-family:'Montserrat',Arial,sans-serif;
+                font-size:2.1rem;
+                font-weight:bold;
+                background:#2b4fa2;
+                border-radius:14px;
+                box-shadow:0 2px 8px #0006;
+                z-index:3;
+                pointer-events:none;
+                min-width:64px;
+                min-height:44px;
+                text-align:center;
+                display:none;
+                padding:0.18em 0.9em;
+                border:2px solid #fff;
+                transition:none;
+            "></div>
+            <div id="pong-precount" style="
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform:translate(-50%,-50%);
+                color:#2ecc40;
+                font-family:'Montserrat',Arial,sans-serif;
+                font-size:4.5rem;
+                font-weight:bold;
+                background:none;
+                z-index:5;
+                pointer-events:none;
+                display:none;
+                text-shadow:0 2px 12px #fff,0 0 12px #2ecc40,2px 2px 0 #fff;
+            "></div>
         </div>
     </div>
     <!-- DERROTA DIALOGO -->
@@ -323,6 +357,8 @@
             const canvas = document.getElementById('pong-canvas');
             const ctx = canvas.getContext('2d');
             const messageDiv = document.getElementById('pong-message');
+            const timerDiv = document.getElementById('pong-timer');
+            const preCountDiv = document.getElementById('pong-precount');
             // Responsive canvas
             function resizeCanvas() {
                 const container = canvas.parentElement;
@@ -340,6 +376,20 @@
             let animationId;
             let lastTime = null;
 
+            // Temporizador IA
+            let aiActive = true;
+            let timerState = "active"; // "active" | "pause"
+            let timer = 15.0; // segundos
+
+            // Velocidad constante de la pelota (más lenta)
+            const BALL_SPEED = 6.8;
+
+            // Pre-countdown
+            let preCount = 3.0;
+            let preCounting = true;
+            preCountDiv.style.display = "block";
+            timerDiv.style.display = "none";
+
             function resetVars() {
                 paddleWidth = Math.max(canvas.width * 0.18, 48);
                 paddleHeight = Math.max(canvas.height * 0.025, 16);
@@ -350,8 +400,12 @@
                 aiX = (canvas.width - paddleWidth) / 2;
                 ballX = canvas.width / 2;
                 ballY = canvas.height / 2;
-                ballSpeedX = 5 * (Math.random() > 0.5 ? 1 : -1);
-                ballSpeedY = 5 * (Math.random() > 0.5 ? 1 : -1);
+                // Dirección aleatoria pero velocidad constante
+                let angle = Math.random() * Math.PI / 2 + Math.PI / 4; // entre 45 y 135 grados
+                let dir = Math.random() > 0.5 ? 1 : -1;
+                ballSpeedX = BALL_SPEED * Math.cos(angle) * dir;
+                ballSpeedY = BALL_SPEED * Math.sin(angle) * (Math.random() > 0.5 ? 1 : -1);
+                normalizeBallSpeed();
             }
             resetVars();
 
@@ -410,19 +464,65 @@
                 ctx.fillText(aiScore, canvas.width/2, canvas.height*0.3);
             }
 
+            function impossibleAI() {
+                // IA imposible: sigue la bola perfectamente (solo si activa)
+                if (aiActive) {
+                    aiX = Math.max(0, Math.min(canvas.width - paddleWidth, ballX - paddleWidth/2));
+                }
+                // Si está en pausa, no mueve la raqueta
+            }
+
+            function normalizeBallSpeed() {
+                // Mantiene la velocidad de la bola constante
+                let speed = Math.sqrt(ballSpeedX * ballSpeedX + ballSpeedY * ballSpeedY);
+                if (speed === 0) {
+                    ballSpeedX = BALL_SPEED;
+                    ballSpeedY = 0;
+                    return;
+                }
+                ballSpeedX = (ballSpeedX / speed) * BALL_SPEED;
+                ballSpeedY = (ballSpeedY / speed) * BALL_SPEED;
+            }
+
             function update(dt) {
+                // Pre-countdown
+                if (preCounting) {
+                    preCount -= dt;
+                    if (preCount > 0) {
+                        preCountDiv.textContent = Math.ceil(preCount);
+                    } else {
+                        preCounting = false;
+                        preCountDiv.style.display = "none";
+                        timerDiv.style.display = "block";
+                        lastTime = null; // reset timing for smoothness
+                    }
+                    return;
+                }
+
+                // Temporizador IA
+                timer -= dt;
+                if (timerState === "active") {
+                    if (timer <= 0) {
+                        timerState = "pause";
+                        aiActive = false;
+                        timer = 3.0;
+                    }
+                } else if (timerState === "pause") {
+                    if (timer <= 0) {
+                        timerState = "active";
+                        aiActive = true;
+                        timer = 15.0;
+                    }
+                }
+
                 // Keyboard control
                 let moveSpeed = Math.max(canvas.width * 0.7, 220); // px/sec
                 if (keys['ArrowLeft'] || keys['a']) playerX -= moveSpeed * dt;
                 if (keys['ArrowRight'] || keys['d']) playerX += moveSpeed * dt;
                 playerX = Math.max(0, Math.min(canvas.width - paddleWidth, playerX));
 
-                // AI movement (smooth interpolation)
-                const aiCenter = aiX + paddleWidth/2;
-                let aiTarget = ballX - paddleWidth/2;
-                let aiSpeed = Math.max(canvas.width * 0.55, 180); // px/sec
-                aiX += (aiTarget - aiX) * Math.min(1, aiSpeed * dt / Math.abs(aiTarget - aiX + 0.01));
-                aiX = Math.max(0, Math.min(canvas.width - paddleWidth, aiX));
+                // IA imposible
+                impossibleAI();
 
                 // Ball movement
                 ballX += ballSpeedX * dt * 60;
@@ -432,10 +532,12 @@
                 if (ballX - ballRadius < 0) {
                     ballX = ballRadius;
                     ballSpeedX *= -1;
+                    normalizeBallSpeed();
                 }
                 if (ballX + ballRadius > canvas.width) {
                     ballX = canvas.width - ballRadius;
                     ballSpeedX *= -1;
+                    normalizeBallSpeed();
                 }
 
                 // Player paddle collision
@@ -446,16 +548,13 @@
                 ) {
                     ballY = playerY - ballRadius;
                     ballSpeedY *= -1;
-                    // Add some effect based on where it hits
                     let hit = (ballX - (playerX + paddleWidth/2)) / (paddleWidth/2);
-                    ballSpeedX += hit * 3;
-                    // Clamp speed
-                    ballSpeedX = Math.max(-9, Math.min(9, ballSpeedX));
-                    // Aumenta levemente la velocidad de la bola
-                    ballSpeedY *= 1.04;
+                    ballSpeedX += hit * 2.5;
+                    normalizeBallSpeed();
                 }
-                // AI paddle collision
+                // AI paddle collision (solo si activa)
                 if (
+                    aiActive &&
                     ballY - ballRadius <= aiY + paddleHeight &&
                     ballX > aiX && ballX < aiX + paddleWidth &&
                     ballSpeedY < 0
@@ -463,9 +562,8 @@
                     ballY = aiY + paddleHeight + ballRadius;
                     ballSpeedY *= -1;
                     let hit = (ballX - (aiX + paddleWidth/2)) / (paddleWidth/2);
-                    ballSpeedX += hit * 3;
-                    ballSpeedX = Math.max(-9, Math.min(9, ballSpeedX));
-                    ballSpeedY *= 1.04;
+                    ballSpeedX += hit * 2.5;
+                    normalizeBallSpeed();
                 }
 
                 // Score
@@ -477,13 +575,32 @@
                     aiScore++;
                     resetBall(1);
                 }
+
+                // --- Timer visual: ahora arriba del cuadrado azul (pong-container) ---
+                if (!preCounting) {
+                    timerDiv.style.display = "block";
+                    // Coloca el timer centrado arriba del canvas (pong-canvas)
+                    const canvasRect = canvas.getBoundingClientRect();
+                    const containerRect = canvas.parentElement.getBoundingClientRect();
+                    // Calcula el centro horizontal del canvas respecto al contenedor
+                    const left = (canvas.offsetLeft + canvas.offsetWidth / 2) - (timerDiv.offsetWidth / 2);
+                    // Coloca el timer unos píxeles arriba del canvas (ajusta el valor de top según lo que desees)
+                    const top = canvas.offsetTop - 28;
+                    timerDiv.style.left = `calc(50% - ${timerDiv.offsetWidth/2}px)`;
+                    timerDiv.style.top = `${top}px`;
+                    timerDiv.textContent = timer.toFixed(1);
+                }
             }
 
             function resetBall(dir) {
                 ballX = canvas.width / 2;
                 ballY = canvas.height / 2;
-                ballSpeedX = 5 * (Math.random() > 0.5 ? 1 : -1);
-                ballSpeedY = 5 * dir;
+                // Dirección aleatoria pero velocidad constante
+                let angle = Math.random() * Math.PI / 2 + Math.PI / 4; // entre 45 y 135 grados
+                let dirX = Math.random() > 0.5 ? 1 : -1;
+                ballSpeedX = BALL_SPEED * Math.cos(angle) * dirX;
+                ballSpeedY = BALL_SPEED * Math.sin(angle) * dir;
+                normalizeBallSpeed();
             }
 
             function loop(now) {
@@ -493,7 +610,7 @@
                 lastTime = now;
                 update(dt);
                 draw();
-                if (playerScore >= 5 || aiScore >= 5) {
+                if (!preCounting && (playerScore >= 5 || aiScore >= 5)) {
                     gameOver = true;
                     showEndMessage();
                     return;
@@ -502,6 +619,8 @@
             }
 
             function showEndMessage() {
+                timerDiv.style.display = "none";
+                preCountDiv.style.display = "none";
                 if (playerScore >= 5) {
                     messageDiv.textContent = "¡Ganaste!";
                     messageDiv.classList.add('visible');
@@ -521,6 +640,13 @@
             messageDiv.classList.remove('visible');
             lastTime = null;
             resetVars();
+            aiActive = true;
+            timerState = "active";
+            timer = 15.0;
+            preCount = 3.0;
+            preCounting = true;
+            preCountDiv.style.display = "block";
+            timerDiv.style.display = "none";
             requestAnimationFrame(loop);
         }
 
