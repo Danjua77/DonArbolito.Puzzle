@@ -121,16 +121,8 @@
             touch-action: none;
         }
         #pong-end {
-            /* Centra el contenido y limita el área visible */
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw;
-            height: 100vh;
-            max-width: 430px;
-            max-height: 932px;
-            min-width: 320px;
-            min-height: 568px;
-            margin: 0 auto;
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             background: url('Fondo texto.jpg') no-repeat center center;
             background-size: cover;
             color: #178a2c;
@@ -140,10 +132,6 @@
             justify-content: center;
             z-index: 10;
             font-family: 'Montserrat', Arial, sans-serif;
-            box-sizing: border-box;
-            /* Elimina el exceso de la pantalla */
-            right: 0; bottom: 0;
-            overflow: hidden;
         }
         #pong-end .arbol-img {
             width: 38vw;
@@ -167,7 +155,7 @@
             min-width: 120px;
             height: 180px;
             background: #fff;
-            margin: 0 auto;
+            margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
