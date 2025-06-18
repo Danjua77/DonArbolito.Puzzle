@@ -9,16 +9,15 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            background: #232f27; /* Fondo oscuro como en la imagen */
+            background: #e8f5e9;
         }
         body {
             min-height: 100vh;
-            min-width: 100vw;
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Fade-in */
+
+            /* Haz la animación de fade-in más rápida */
             opacity: 0;
             transition: opacity 1.5s cubic-bezier(.77,0,.18,1);
         }
@@ -26,25 +25,20 @@
             opacity: 1;
         }
         .arbol-chan-container {
-            width: 100%;
-            max-width: 370px;
-            min-width: 0;
-            height: auto;
-            max-height: 90vh;
-            min-height: 0;
-            margin: 0 auto;
+            width: 100vw;
+            height: 100vh;
+            max-width: 430px;
+            max-height: 932px;
+            min-width: 320px;
+            min-height: 568px;
             background: url('Fondo texto.jpg') no-repeat center center;
             background-size: cover;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
             box-shadow: 0 0 20px 2px rgba(0,0,0,0.2);
-            border-radius: 22px;
+            border-radius: 20px;
             overflow: hidden;
             position: relative;
-            padding: 2.2rem 1.2rem 2rem 1.2rem;
-            box-sizing: border-box;
         }
         .arbol-chan-content {
             display: flex;
@@ -52,14 +46,14 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 340px;
+            max-width: 350px;
             margin: 0 auto;
         }
         /* Imagen baja desde arriba */
         .arbol-chan-img {
-            width: 110px;
-            max-width: 160px;
-            min-width: 90px;
+            width: 60vw;
+            max-width: 220px;
+            min-width: 120px;
             margin-top: 0;
             opacity: 0;
             transition: opacity 1.2s, transform 1.2s cubic-bezier(.77,0,.18,1);
@@ -71,8 +65,8 @@
         }
         .arbol-chan-titulo {
             font-family: 'Montserrat', Arial, sans-serif;
-            color: #7fffad;
-            font-size: 2.1rem;
+            color: #178a2c;
+            font-size: 2.5rem;
             font-weight: bold;
             margin-top: 1.2rem;
             margin-bottom: 0.7rem;
@@ -82,7 +76,7 @@
         .arbol-chan-texto {
             color: #fff;
             font-family: 'Roboto', Arial, sans-serif;
-            font-size: 1.08rem;
+            font-size: 1.2rem;
             margin-top: 0.5rem;
             margin-bottom: 1.2rem;
             text-align: center;
@@ -90,7 +84,7 @@
         }
         .btn-continuar {
             margin-top: 0.5rem;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             background: #178a2c;
             color: #fff;
             border: 2px solid #fff;
