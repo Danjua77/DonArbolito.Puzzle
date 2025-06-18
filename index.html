@@ -137,6 +137,78 @@
             background: #176d13;
             border: 2px solid #ffe44d;
         }
+        .fade-out {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transition: opacity 0.8s;
+        }
+        .pong-bg {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            max-width: 430px;
+            max-height: 932px;
+            min-width: 320px;
+            min-height: 568px;
+            aspect-ratio: 9/16;
+            background: url('fonde mesa.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0;
+            z-index: 10;
+            border-radius: 32px;
+            box-shadow: 0 0 0 8px #2222, 0 8px 32px #0005;
+            transition: opacity 1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pong-bg.visible {
+            opacity: 1;
+        }
+        .pong-container {
+            background: #2b4fa2;
+            border-radius: 24px;
+            box-shadow: 0 4px 24px #0006;
+            width: 320px;
+            height: 480px;
+            max-width: 90vw;
+            max-height: 70vh;
+            min-width: 220px;
+            min-height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        canvas#pong-canvas {
+            display: block;
+            background: transparent;
+            border-radius: 20px;
+            width: 100%;
+            height: 100%;
+        }
+        .pong-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 2rem;
+            background: rgba(43,79,162,0.95);
+            padding: 1.2rem 2.5rem;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px #0008;
+            text-align: center;
+            z-index: 2;
+            display: none;
+        }
+        .pong-message.visible {
+            display: block;
+        }
         @media (max-width: 430px) {
             .main-content, .fade-bg {
                 max-width: 100vw;
@@ -160,6 +232,14 @@
                 min-width: 80px;
                 max-width: 98vw;
             }
+            .pong-container {
+                width: 98vw;
+                height: 60vw;
+                min-width: 180px;
+                min-height: 180px;
+                max-width: 98vw;
+                max-height: 70vw;
+            }
         }
     </style>
 </head>
@@ -173,6 +253,23 @@
             pero comprenderá usted que, en su noble búsqueda por el caché, los logros deben ganarse con honor y elegancia.”
         </div>
         <button class="btn-continuar" id="btn-continuar">Continuar</button>
+    </div>
+    <!-- PONG GAME ELEMENTS -->
+    <div class="pong-bg" id="pong-bg" style="display:none;">
+        <div class="pong-container">
+            <canvas id="pong-canvas" width="320" height="480"></canvas>
+            <div class="pong-message" id="pong-message"></div>
+        </div>
+    </div>
+    <!-- DERROTA DIALOGO -->
+    <div class="fade-bg" id="lose-fade-bg" style="display:none; z-index:20;"></div>
+    <div class="main-content" id="lose-content" style="display:none; z-index:21;">
+        <img src="DonArbolito.png" class="arbolito-img visible" alt="Don Arbolito" style="margin-top:0;" />
+        <div class="titulo-arbolito">Don Arbolito</div>
+        <div class="dialogo-arbolito" id="lose-dialogo">
+            Qué desafortunado...
+        </div>
+        <button class="btn-continuar" id="btn-lose-continuar">Continuar</button>
     </div>
     <script>
         // Paso 1: Fade-in del fondo
@@ -192,14 +289,264 @@
                 }, 1200);
             }, 100);
         });
+        let dialogoStep = 0;
         // Botón continuar (puedes agregar lógica aquí)
         document.getElementById('btn-continuar').onclick = function() {
-            document.getElementById('dialogo-arbolito').innerHTML =
-                '“Aun así, le concederé una ocasión justa.<br>' +
-                'Si logra resistir con dignidad mis embates durante ciclos de quince segundos,<br>' +
-                'y consigue asestar 5 golpes certeros durante los espacios de 3 segundos en los que no muevo la raqueta para defenderme...<br>' +
-                'entonces, y solo entonces, consideraremos este asunto resuelto entre persona-planta decentemente.”';
+            const dialogo = document.getElementById('dialogo-arbolito');
+            if (dialogoStep === 0) {
+                dialogo.innerHTML =
+                    '“Aun así, le concederé una ocasión justa.<br>' +
+                    'Si logra resistir con dignidad mis embates durante ciclos de quince segundos,<br>' +
+                    'y consigue asestar 5 golpes certeros durante los espacios de 3 segundos en los que no muevo la raqueta para defenderme...<br>' +
+                    'entonces, y solo entonces, consideraremos este asunto resuelto entre persona-planta decentemente.”';
+                dialogoStep = 1;
+            } else {
+                // Fade out all elements
+                fadeBg.classList.add('fade-out');
+                mainContent.classList.add('fade-out');
+                setTimeout(() => {
+                    fadeBg.style.display = 'none';
+                    mainContent.style.display = 'none';
+                    // Show pong background
+                    const pongBg = document.getElementById('pong-bg');
+                    pongBg.style.display = 'flex';
+                    setTimeout(() => {
+                        pongBg.classList.add('visible');
+                        startPongGame();
+                    }, 50);
+                }, 800);
+            }
         };
+
+        // --- PONG GAME LOGIC ---
+        function startPongGame() {
+            const canvas = document.getElementById('pong-canvas');
+            const ctx = canvas.getContext('2d');
+            const messageDiv = document.getElementById('pong-message');
+            // Responsive canvas
+            function resizeCanvas() {
+                const container = canvas.parentElement;
+                canvas.width = container.offsetWidth;
+                canvas.height = container.offsetHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Game variables
+            let playerScore = 0, aiScore = 0, gameOver = false;
+            let paddleWidth, paddleHeight, ballRadius;
+            let playerY, aiY, playerX, aiX, ballX, ballY, ballSpeedX, ballSpeedY;
+            let keys = {};
+            let animationId;
+            let lastTime = null;
+
+            function resetVars() {
+                paddleWidth = Math.max(canvas.width * 0.18, 48);
+                paddleHeight = Math.max(canvas.height * 0.025, 16);
+                ballRadius = Math.max(canvas.width * 0.035, 10);
+                playerY = canvas.height - paddleHeight - 10;
+                aiY = 10;
+                playerX = (canvas.width - paddleWidth) / 2;
+                aiX = (canvas.width - paddleWidth) / 2;
+                ballX = canvas.width / 2;
+                ballY = canvas.height / 2;
+                ballSpeedX = 5 * (Math.random() > 0.5 ? 1 : -1);
+                ballSpeedY = 5 * (Math.random() > 0.5 ? 1 : -1);
+            }
+            resetVars();
+
+            window.addEventListener('resize', () => {
+                resetVars();
+            });
+
+            // Control: mouse/touch or keyboard
+            function movePlayerTo(x) {
+                playerX = Math.max(0, Math.min(canvas.width - paddleWidth, x - paddleWidth / 2));
+            }
+            canvas.addEventListener('mousemove', e => {
+                const rect = canvas.getBoundingClientRect();
+                movePlayerTo(e.clientX - rect.left);
+            });
+            canvas.addEventListener('touchmove', e => {
+                if (e.touches.length > 0) {
+                    const rect = canvas.getBoundingClientRect();
+                    movePlayerTo(e.touches[0].clientX - rect.left);
+                }
+            });
+            document.addEventListener('keydown', e => {
+                keys[e.key] = true;
+            });
+            document.addEventListener('keyup', e => {
+                keys[e.key] = false;
+            });
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // Middle line
+                ctx.strokeStyle = "#fff8";
+                ctx.setLineDash([8, 8]);
+                ctx.beginPath();
+                ctx.moveTo(canvas.width/2, 0);
+                ctx.lineTo(canvas.width/2, canvas.height);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                // Paddles
+                ctx.fillStyle = "#fff";
+                ctx.fillRect(playerX, playerY, paddleWidth, paddleHeight);
+                ctx.fillRect(aiX, aiY, paddleWidth, paddleHeight);
+                // Ball
+                ctx.beginPath();
+                ctx.arc(ballX, ballY, ballRadius, 0, Math.PI*2);
+                ctx.fillStyle = "#ffe44d";
+                ctx.shadowColor = "#ffe44d";
+                ctx.shadowBlur = 8;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                // Scores
+                ctx.font = `bold ${Math.floor(canvas.height/12)}px Montserrat, Arial, sans-serif`;
+                ctx.fillStyle = "#fff";
+                ctx.textAlign = "center";
+                ctx.fillText(playerScore, canvas.width/2, canvas.height*0.7);
+                ctx.fillText(aiScore, canvas.width/2, canvas.height*0.3);
+            }
+
+            function update(dt) {
+                // Keyboard control
+                let moveSpeed = Math.max(canvas.width * 0.7, 220); // px/sec
+                if (keys['ArrowLeft'] || keys['a']) playerX -= moveSpeed * dt;
+                if (keys['ArrowRight'] || keys['d']) playerX += moveSpeed * dt;
+                playerX = Math.max(0, Math.min(canvas.width - paddleWidth, playerX));
+
+                // AI movement (smooth interpolation)
+                const aiCenter = aiX + paddleWidth/2;
+                let aiTarget = ballX - paddleWidth/2;
+                let aiSpeed = Math.max(canvas.width * 0.55, 180); // px/sec
+                aiX += (aiTarget - aiX) * Math.min(1, aiSpeed * dt / Math.abs(aiTarget - aiX + 0.01));
+                aiX = Math.max(0, Math.min(canvas.width - paddleWidth, aiX));
+
+                // Ball movement
+                ballX += ballSpeedX * dt * 60;
+                ballY += ballSpeedY * dt * 60;
+
+                // Wall collision
+                if (ballX - ballRadius < 0) {
+                    ballX = ballRadius;
+                    ballSpeedX *= -1;
+                }
+                if (ballX + ballRadius > canvas.width) {
+                    ballX = canvas.width - ballRadius;
+                    ballSpeedX *= -1;
+                }
+
+                // Player paddle collision
+                if (
+                    ballY + ballRadius >= playerY &&
+                    ballX > playerX && ballX < playerX + paddleWidth &&
+                    ballSpeedY > 0
+                ) {
+                    ballY = playerY - ballRadius;
+                    ballSpeedY *= -1;
+                    // Add some effect based on where it hits
+                    let hit = (ballX - (playerX + paddleWidth/2)) / (paddleWidth/2);
+                    ballSpeedX += hit * 3;
+                    // Clamp speed
+                    ballSpeedX = Math.max(-9, Math.min(9, ballSpeedX));
+                    // Aumenta levemente la velocidad de la bola
+                    ballSpeedY *= 1.04;
+                }
+                // AI paddle collision
+                if (
+                    ballY - ballRadius <= aiY + paddleHeight &&
+                    ballX > aiX && ballX < aiX + paddleWidth &&
+                    ballSpeedY < 0
+                ) {
+                    ballY = aiY + paddleHeight + ballRadius;
+                    ballSpeedY *= -1;
+                    let hit = (ballX - (aiX + paddleWidth/2)) / (paddleWidth/2);
+                    ballSpeedX += hit * 3;
+                    ballSpeedX = Math.max(-9, Math.min(9, ballSpeedX));
+                    ballSpeedY *= 1.04;
+                }
+
+                // Score
+                if (ballY - ballRadius < 0) {
+                    playerScore++;
+                    resetBall(-1);
+                }
+                if (ballY + ballRadius > canvas.height) {
+                    aiScore++;
+                    resetBall(1);
+                }
+            }
+
+            function resetBall(dir) {
+                ballX = canvas.width / 2;
+                ballY = canvas.height / 2;
+                ballSpeedX = 5 * (Math.random() > 0.5 ? 1 : -1);
+                ballSpeedY = 5 * dir;
+            }
+
+            function loop(now) {
+                if (gameOver) return;
+                if (!lastTime) lastTime = now;
+                let dt = Math.min((now - lastTime) / 1000, 0.035); // max 35ms/frame
+                lastTime = now;
+                update(dt);
+                draw();
+                if (playerScore >= 5 || aiScore >= 5) {
+                    gameOver = true;
+                    showEndMessage();
+                    return;
+                }
+                animationId = requestAnimationFrame(loop);
+            }
+
+            function showEndMessage() {
+                if (playerScore >= 5) {
+                    messageDiv.textContent = "¡Ganaste!";
+                    messageDiv.classList.add('visible');
+                } else {
+                    // Fade out pong and show lose dialog
+                    const pongBg = document.getElementById('pong-bg');
+                    pongBg.classList.remove('visible');
+                    setTimeout(() => {
+                        pongBg.style.display = 'none';
+                        showLoseDialog();
+                    }, 800);
+                }
+            }
+
+            // Start game
+            playerScore = 0; aiScore = 0; gameOver = false;
+            messageDiv.classList.remove('visible');
+            lastTime = null;
+            resetVars();
+            requestAnimationFrame(loop);
+        }
+
+        function showLoseDialog() {
+            // Fade in Fondo texto.jpg y dialogo
+            const loseFadeBg = document.getElementById('lose-fade-bg');
+            const loseContent = document.getElementById('lose-content');
+            // Set Fondo texto.jpg como fondo
+            loseFadeBg.style.background = "url('Fondo texto.jpg') no-repeat center center";
+            loseFadeBg.style.backgroundSize = "cover";
+            loseFadeBg.style.display = 'block';
+            loseContent.style.display = 'flex';
+            setTimeout(() => {
+                loseFadeBg.classList.add('visible');
+                loseContent.classList.add('visible');
+            }, 30);
+            // Botón continuar
+            document.getElementById('btn-lose-continuar').onclick = function() {
+                // Fade out lose dialog
+                loseFadeBg.classList.remove('visible');
+                loseContent.classList.remove('visible');
+                setTimeout(() => {
+                    window.location.href = "https://danjua77.github.io/Sagrado.Puzzle/";
+                }, 700);
+            };
+        }
     </script>
 </body>
 </html>
