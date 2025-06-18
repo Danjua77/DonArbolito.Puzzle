@@ -577,15 +577,37 @@
                         const pongContainer = document.getElementById('pong-container');
                         let html = '';
                         if (playerWon) {
+                            // Espacio de diálogo igual a los otros, con fondo, imagen, título, texto y botón
                             html = `
-                                <div id="pong-end" style="background:linear-gradient(180deg,#e8f5e9 0%,#178a2c 100%);color:#178a2c;">
+                                <div class="arbol-chan-container" id="pong-end" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:10;background:url('Fondo texto.jpg') no-repeat center center;background-size:cover;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+                                    <div class="arbol-chan-content" style="background:none;box-shadow:none;">
+                                        <img src="DonArbolito.png" class="arbol-chan-img" alt="Don Árbol" style="opacity:1;transform:none;margin-bottom:0.7rem;" />
+                                        <div class="arbol-chan-titulo" style="color:#178a2c;margin-bottom:0.7rem;">Don Árbol</div>
+                                        <div class="arbol-chan-texto" style="color:#fff;">
+                                            “¡¡Excelso desempeño, noble usuario!<br>
+                                            Ha demostrado valor y precisión.”<br><br>
+                                            “Como fue pactado, le concedere la pista que es una imagen tomada en este parque.”<br><br>
+                                            “Encuentre el lugar, observe con atención… y halle el código.”<br>
+                                            Y recuerde: no se rinda, en esta búsqueda ni en su travesía.”
+                                        </div>
+                                        <button id="pong-show-clue" class="btn-continuar" style="margin-top:1.2rem;">Ver pista</button>
+                                    </div>
+                                </div>
+                            `;
+                            pongContainer.insertAdjacentHTML('beforeend', html);
+                            document.getElementById('pong-show-clue').onclick = function() {
+                                // Reemplaza el diálogo por la pista
+                                document.getElementById('pong-end').innerHTML = `
                                     <h2 style="margin-top:0;">Siguiente pista</h2>
                                     <div id="pong-next-img" style="margin:0; padding:0;">
                                         <img src="gym.jpeg" alt="Pista" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:12px 12px 12px 12px;">
                                     </div>
                                     <button id="pong-continue" style="font-size:1.3rem;background:#178a2c;color:#fff;border:2px solid #fff;border-radius:8px;padding:0.7rem 2.5rem;font-weight:bold;font-family:'Montserrat',Arial,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.12);cursor:pointer;margin-top:1.5rem;margin-bottom:2rem;">Continuar</button>
-                                </div>
-                            `;
+                                `;
+                                document.getElementById('pong-continue').onclick = function() {
+                                    window.location.href = "https://danjua77.github.io/Sagrado.Puzzle/";
+                                };
+                            };
                         } else {
                             html = `
                                 <div id="pong-end">
@@ -594,14 +616,7 @@
                                     <button id="pong-retry">Continuar</button>
                                 </div>
                             `;
-                        }
-                        pongContainer.insertAdjacentHTML('beforeend', html);
-                        if (playerWon) {
-                            document.getElementById('pong-continue').onclick = function() {
-                                location.reload();
-                            };
-                        }
-                        if (!playerWon) {
+                            pongContainer.insertAdjacentHTML('beforeend', html);
                             document.getElementById('pong-retry').onclick = function() {
                                 location.reload();
                             };
