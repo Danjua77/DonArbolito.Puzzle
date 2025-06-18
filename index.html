@@ -1,1 +1,186 @@
-Arbol
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Don Arbolito</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            min-width: 100vw;
+            width: 100vw;
+            height: 100vh;
+            box-sizing: border-box;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .fade-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: url('Fondo texto.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+            z-index: 1;
+        }
+        .fade-bg.visible {
+            opacity: 1;
+        }
+        .main-content {
+            position: relative;
+            z-index: 2;
+            width: 100vw;
+            height: 100vh;
+            max-width: 430px;
+            max-height: 932px;
+            min-width: 320px;
+            min-height: 568px;
+            aspect-ratio: 9/16;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            margin: 0 auto;
+        }
+        .main-content.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transition: opacity 0.7s;
+        }
+        .arbolito-img {
+            width: 60vw;
+            max-width: 220px;
+            min-width: 120px;
+            margin-top: 0;
+            opacity: 0;
+            transform: translateY(-120px);
+            transition: opacity 1.2s, transform 1.2s cubic-bezier(.77,0,.18,1);
+            box-shadow: none;
+            border-radius: 0;
+            background: none;
+            display: block;
+        }
+        .arbolito-img.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .titulo-arbolito {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 2.5rem;
+            color: #178a2c;
+            font-weight: bold;
+            margin-top: 1.2rem;
+            margin-bottom: 0.7rem;
+            text-align: center;
+            text-shadow: 0 2px 12px #fff, 0 0 12px #178a2c, 2px 2px 0 #fff;
+        }
+        .dialogo-arbolito {
+            background: none;
+            color: #fff;
+            font-family: 'Roboto', Arial, sans-serif;
+            font-size: 1.15rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1.2rem;
+            text-align: center;
+            text-shadow: 0 2px 8px #000;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+            max-width: 340px;
+            border: none;
+        }
+        .btn-continuar {
+            margin-top: 0.5rem;
+            font-size: 1.2rem;
+            background: #178a2c;
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            padding: 0.7rem 2.5rem;
+            font-weight: bold;
+            font-family: 'Montserrat', Arial, sans-serif;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            cursor: pointer;
+            transition: background 0.2s, border 0.2s;
+        }
+        .btn-continuar:active {
+            background: #176d13;
+            border: 2px solid #ffe44d;
+        }
+        @media (max-width: 430px) {
+            .main-content {
+                max-width: 100vw;
+                max-height: 100vh;
+                min-width: 0;
+                min-height: 0;
+                aspect-ratio: 9/16;
+            }
+            .titulo-arbolito {
+                font-size: 2rem;
+            }
+            .dialogo-arbolito {
+                font-size: 1rem;
+                padding: 0;
+                max-width: 98vw;
+            }
+            .arbolito-img {
+                width: 80vw;
+                min-width: 80px;
+                max-width: 98vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="fade-bg" id="fade-bg"></div>
+    <div class="main-content" id="main-content">
+        <img src="DonArbolito.png" class="arbolito-img" id="arbolito-img" alt="Don Arbolito" />
+        <div class="titulo-arbolito">Don Arbolito</div>
+        <div class="dialogo-arbolito" id="dialogo-arbolito">
+            “Estimado caballero, debo confesar que me resulta lamentable negarle la pista sin más...<br>
+            pero comprenderá usted que, en su noble búsqueda por el caché, los logros deben ganarse con honor y elegancia.”
+        </div>
+        <button class="btn-continuar" id="btn-continuar">Continuar</button>
+    </div>
+    <script>
+        // Paso 1: Fade-in del fondo
+        const fadeBg = document.getElementById('fade-bg');
+        const mainContent = document.getElementById('main-content');
+        const arbolitoImg = document.getElementById('arbolito-img');
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                fadeBg.classList.add('visible');
+                // Paso 2: Mostrar main-content después del fade-in del fondo
+                setTimeout(() => {
+                    mainContent.classList.add('visible');
+                    // Paso 3: Animar bajada de DonArbolito.png
+                    setTimeout(() => {
+                        arbolitoImg.classList.add('visible');
+                    }, 400);
+                }, 1200);
+            }, 100);
+        });
+        // Botón continuar (puedes agregar lógica aquí)
+        document.getElementById('btn-continuar').onclick = function() {
+            document.getElementById('dialogo-arbolito').innerHTML =
+                '“Aun así, le concederé una ocasión justa.<br>' +
+                'Si logra resistir con dignidad mis embates durante ciclos de quince segundos,<br>' +
+                'y consigue asestar 5 golpes certeros durante los espacios de 3 segundos en los que no muevo la raqueta para defenderme...<br>' +
+                'entonces, y solo entonces, consideraremos este asunto resuelto entre persona-planta decentemente.”';
+        };
+    </script>
+</body>
+</html>
