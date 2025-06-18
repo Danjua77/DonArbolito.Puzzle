@@ -226,22 +226,33 @@
         const btnContinuar = document.getElementById('btn-continuar');
         btnContinuar.addEventListener('click', function() {
             if (arbolChanDialogStep === 0) {
-                arbolChanTexto.innerHTML = "Le concederé una ocasión justa. Resista quince segundos de mis embates y anote 5 puntos durante los breves momentos en que no defiendo...Solo entonces, daremos este duelo por resuelto entre ser humano y planta con dignidad.";
+                arbolChanTexto.innerHTML = "Le concederé una ocasión justa. Resista 15 segundos de mis embates y anoté 5 puntos durante los segundos en que no defiendo... Solo entonces, daremos este duelo por resuelto este duelo humano-planta con dignidad.";
                 arbolChanDialogStep = 1;
             } else {
-                // Inicia el juego de ping pong
+                // Muestra el canvas y el cuadro azul, pero el juego inicia tras el contador
                 document.body.innerHTML = `
                     <style>
                         /* ... pong styles ya incluidos arriba ... */
                     </style>
                     <div id="pong-container">
                         <canvas id="pong-canvas"></canvas>
+                        <div id="pong-countdown"
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;z-index:50;pointer-events:none;">
+                            <span id="pong-countdown-num"
+                                style="font-family:'Montserrat',Arial,sans-serif;font-size:4rem;color:#fff;text-shadow:0 2px 16px #178a2c,0 0 12px #fff;">
+                                3
+                            </span>
+                        </div>
                     </div>
+                    <div id="ost-text" style="position:fixed;bottom:18px;left:0;width:100vw;text-align:center;z-index:20;font-family:'Montserrat',Arial,sans-serif;font-size:1.05rem;color:#fff;text-shadow:0 2px 8px #000;">
+                        OST: Mt. Dedede - Kirby's Dream Land
+                    </div>
+                    <audio id="pong-audio" src="pingpongtime.mp3" loop></audio>
                 `;
-                // --- Pong game logic (idéntico al flujo original) ---
-                (function() {
+                setTimeout(() => {
                     const canvas = document.getElementById('pong-canvas');
                     const ctx = canvas.getContext('2d');
+                    // --- Pong game logic (idéntico al flujo original) ---
                     function getGameSize() {
                         return { w: canvas.width, h: canvas.height };
                     }
@@ -270,7 +281,7 @@
                     let player = { x: 0, y: 0, w: paddleW(), h: paddleH(), score: 0 };
                     let ai = { x: 0, y: 0, w: paddleW(), h: paddleH(), score: 0 };
                     let ball = { x: 0, y: 0, vx: 0, vy: 0, size: ballSize() };
-                    let running = true;
+                    let running = false; // El juego inicia después del contador
                     let touchX = null;
 
                     function resetPositions(servingToPlayer = false) {
@@ -560,10 +571,11 @@
                     }
 
                     function gameLoop() {
-                        if (!running) return;
-                        aiMove();
-                        update();
                         draw();
+                        if (running) {
+                            aiMove();
+                            update();
+                        }
                         requestAnimationFrame(gameLoop);
                     }
 
@@ -614,15 +626,36 @@
                     aiFrozen = false;
                     aiFreezeTimer = 0;
                     resetPositions(false);
-                    running = true;
+
+                    // --- Contador de 3 a 1 ---
+                    let countdown = 3;
+                    const updateCountdown = () => {
+                        const numElem = document.getElementById('pong-countdown-num');
+                        if (numElem) numElem.textContent = countdown > 0 ? countdown : "";
+                    };
+                    updateCountdown();
+
+                    // Inicia la música apenas inicia el contador
+                    const audio = document.getElementById('pong-audio');
+                    if (audio) {
+                        audio.currentTime = 0;
+                        audio.play().catch(()=>{});
+                    }
+
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        updateCountdown();
+                        if (countdown === 0) {
+                            clearInterval(countdownInterval);
+                            // Oculta el contador y arranca el juego
+                            const countdownDiv = document.getElementById('pong-countdown');
+                            if (countdownDiv) countdownDiv.style.display = 'none';
+                            running = true;
+                        }
+                    }, 1000);
+
                     gameLoop();
-                })();
-            }
-        });
-    </script>
-</body>
-</html>
-                })();
+                }, 10);
             }
         });
     </script>
