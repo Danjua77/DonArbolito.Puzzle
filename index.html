@@ -363,30 +363,20 @@
                     }
 
                     function drawPaddle(p, isPlayer) {
+                        const ctx = canvas.getContext('2d');
                         ctx.save();
-                        if (!isPlayer && aiFrozen) {
-                            const t = Date.now() % 320;
-                            let dx = 0, dy = 0;
-                            if (t < 40)      { dx = -3; dy =  2; }
-                            else if (t < 80) { dx =  2; dy = -2; }
-                            else if (t < 120){ dx = -2; dy =  3; }
-                            else if (t < 160){ dx =  2; dy = -3; }
-                            else if (t < 200){ dx = -2; dy =  2; }
-                            else if (t < 240){ dx =  3; dy = -2; }
-                            else if (t < 280){ dx = -1; dy =  2; }
-                            else             { dx =  1; dy = -2; }
-                            ctx.translate(dx, dy);
-                            const glitchColors = [
-                                "#ff0055", "#00ffe7", "#fff600", "#ff00ff", "#00ff00", "#ffffff", "#00aaff", "#ff8800"
-                            ];
-                            let colorIdx = Math.floor((Date.now() / 45) % glitchColors.length);
-                            ctx.fillStyle = glitchColors[colorIdx];
+                        if (isPlayer) {
+                            ctx.fillStyle = "#ffe44d";
+                            ctx.shadowColor = "#178a2c";
+                            ctx.shadowBlur = 8;
+                            ctx.fillRect(p.x, p.y, p.w, p.h);
                         } else {
-                            ctx.fillStyle = isPlayer ? "#ffe44d" : "#fff";
+                            // Cambia a gris si la IA está paralizada
+                            ctx.fillStyle = aiFrozen ? "#b0b0b0" : "#fff";
+                            ctx.shadowColor = "#2b4fa2";
+                            ctx.shadowBlur = 4;
+                            ctx.fillRect(p.x, p.y, p.w, p.h);
                         }
-                        ctx.shadowColor = isPlayer ? "#178a2c" : "#2b4fa2";
-                        ctx.shadowBlur = isPlayer ? 8 : 4;
-                        ctx.fillRect(p.x, p.y, p.w, p.h);
                         ctx.restore();
                     }
 
@@ -396,16 +386,8 @@
                         ctx.font = `bold ${rel(0.06, 'w')}px 'Montserrat', Arial, sans-serif`;
                         ctx.textAlign = "center";
                         ctx.textBaseline = "top";
-                        let color;
-                        if (aiFrozen) {
-                            const glitchColors = [
-                                "#ff0055", "#00ffe7", "#fff600", "#ff00ff", "#00ff00", "#ffffff", "#00aaff", "#ff8800"
-                            ];
-                            let colorIdx = Math.floor((Date.now() / 45) % glitchColors.length);
-                            color = glitchColors[colorIdx];
-                        } else {
-                            color = "#fff";
-                        }
+                        // Cambia a gris si la IA está paralizada
+                        let color = aiFrozen ? "#b0b0b0" : "#fff";
                         let timerValue = aiFrozen ? aiFreezeTimer : aiTimer;
                         let timerText = timerValue.toFixed(1);
                         const timerX = ai.x + ai.w/2;
