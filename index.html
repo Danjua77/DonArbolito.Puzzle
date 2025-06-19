@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Secuencia Don Árbolito</title>
+    <title>Don Árbolito Sequence</title>
     <!-- Agrega meta viewport para móviles -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -207,13 +207,13 @@
 <body>
     <div class="arbol-chan-container" id="arbol-chan-container">
         <div class="arbol-chan-content">
-            <img src="DonArbolito.png" class="arbol-chan-img" id="arbol-chan-img" alt="Árbol-chan" />
+            <img src="DonArbolito.png" class="arbol-chan-img" id="arbol-chan-img" alt="Tree-chan" />
             <div class="arbol-chan-titulo" id="arbol-chan-titulo">Don Árbolito</div>
             <div class="arbol-chan-texto" id="arbol-chan-texto">
-                Estimado Usuario, debo confesar que me resulta lamentable negarle la pista sin más…<br>
-                Pero comprenderá usted que, en su noble búsqueda por la búsqueda caché, los logros deben ser alcanzados con honor y elegancia.
+                Dear User, I must confess it is regrettable to deny you the clue just like that...<br>
+                But you will understand that, in your noble quest for the cache, achievements must be earned with honor and elegance.
             </div>
-            <button class="btn-continuar" id="btn-continuar">Continuar</button>
+            <button class="btn-continuar" id="btn-continuar">Continue</button>
         </div>
     </div>
     <script>
@@ -247,16 +247,16 @@
         const btnContinuar = document.getElementById('btn-continuar');
         btnContinuar.addEventListener('click', function() {
             if (arbolChanDialogStep === 0) {
-                arbolChanTexto.innerHTML = "Le concederé una ocasión justa. Resista 15 segundos de mis embates y anoté 5 puntos durante los segundos en que no defiendo... Solo entonces, daremos este duelo por resuelto este duelo humano-planta con dignidad.";
+                arbolChanTexto.innerHTML = "I will grant you a fair chance. Survive 15 seconds of my attacks and score 5 points during the seconds when I am not defending... Only then, this human-plant duel will be resolved with dignity.";
                 arbolChanDialogStep = 1;
             } else {
                 // Muestra el canvas y el cuadro azul, pero el juego inicia tras el contador
                 document.body.innerHTML = `
     <style>
-        /* ... pong styles ya incluidos arriba ... */
+        /* ... pong styles already included above ... */
     </style>
     <div id="pong-container">
-        <!-- Imagen arriba del cuadro azul -->
+        <!-- Image above the blue box -->
         <img src="DonArbolito.png" alt="Don Árbol" style="width:28vw;max-width:110px;min-width:60px;margin-bottom:1.2vh;margin-top:calc(2vh - 20px);z-index:2;position:absolute;top:calc(2vh - 17px);left:50%;transform:translateX(-50%);" id="pong-top-img" />
         <canvas id="pong-canvas"></canvas>
         <div id="pong-countdown"
@@ -588,32 +588,32 @@
                         const pongContainer = document.getElementById('pong-container');
                         let html = '';
                         if (playerWon) {
-                            // Espacio de diálogo igual a los otros, con fondo, imagen, título, texto y botón
+                            // Dialog box with background, image, title, text and button
                             html = `
                                 <div class="arbol-chan-container" id="pong-end" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:10;background:url('Fondo texto.jpg') no-repeat center center;background-size:cover;display:flex;flex-direction:column;justify-content:center;align-items:center;">
                                     <div class="arbol-chan-content" style="background:none;box-shadow:none;">
                                         <img src="DonArbolito.png" class="arbol-chan-img" alt="Don Árbol" style="opacity:1;transform:none;margin-bottom:0.7rem;" />
                                         <div class="arbol-chan-titulo" style="color:#178a2c;margin-bottom:0.7rem;">Don Árbolito</div>
                                         <div class="arbol-chan-texto" style="color:#fff;">
-                                            “¡¡Excelso desempeño, noble usuario!<br>
-                                            Ha demostrado valor y precisión.”<br><br>
-                                            “Como fue pactado, le concedere la pista que es una imagen tomada en este parque.”<br><br>
-                                            “Encuentre el lugar, observe con atención… y halle el código.”<br>
-                                            Y recuerde: no se rinda, en esta búsqueda ni en su travesía.”
+                                            “Excellent performance, noble user!<br>
+                                            You have shown courage and precision.”<br><br>
+                                            “As promised, I will grant you the clue, which is a photo taken in this park.”<br><br>
+                                            “Find the place, observe carefully... and find the code.”<br>
+                                            And remember: do not give up, neither in this quest nor in your journey.”
                                         </div>
-                                        <button id="pong-show-clue" class="btn-continuar" style="margin-top:1.2rem;">Ver pista</button>
+                                        <button id="pong-show-clue" class="btn-continuar" style="margin-top:1.2rem;">See clue</button>
                                     </div>
                                 </div>
                             `;
                             pongContainer.insertAdjacentHTML('beforeend', html);
                             document.getElementById('pong-show-clue').onclick = function() {
-                                // Reemplaza el diálogo por la pista
+                                // Replace dialog with the clue
                                 document.getElementById('pong-end').innerHTML = `
-                                    <h2 style="margin-top:0;">Siguiente pista</h2>
+                                    <h2 style="margin-top:0;">Next clue</h2>
                                     <div id="pong-next-img" style="margin:0; padding:0;">
-                                        <img src="gym.jpeg" alt="Pista" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:12px 12px 12px 12px;">
+                                        <img src="gym.jpeg" alt="Clue" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:12px 12px 12px 12px;">
                                     </div>
-                                    <button id="pong-continue" style="font-size:1.3rem;background:#178a2c;color:#fff;border:2px solid #fff;border-radius:8px;padding:0.7rem 2.5rem;font-weight:bold;font-family:'Montserrat',Arial,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.12);cursor:pointer;margin-top:1.5rem;margin-bottom:2rem;">Continuar</button>
+                                    <button id="pong-continue" style="font-size:1.3rem;background:#178a2c;color:#fff;border:2px solid #fff;border-radius:8px;padding:0.7rem 2.5rem;font-weight:bold;font-family:'Montserrat',Arial,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.12);cursor:pointer;margin-top:1.5rem;margin-bottom:2rem;">Continue</button>
                                 `;
                                 document.getElementById('pong-continue').onclick = function() {
                                     window.location.href = "https://danjua77.github.io/Sagrado.Puzzle/";
@@ -623,8 +623,8 @@
                             html = `
                                 <div id="pong-end">
                                     <img src="DonArbolito.png" class="arbol-img" alt="Don Árbol" />
-                                    <h2>Qué desafortunado....</h2>
-                                    <button id="pong-retry">Continuar</button>
+                                    <h2>How unfortunate...</h2>
+                                    <button id="pong-retry">Continue</button>
                                 </div>
                             `;
                             pongContainer.insertAdjacentHTML('beforeend', html);
@@ -660,6 +660,11 @@
                     if (audio) {
                         audio.currentTime = 0;
                         audio.play().catch(()=>{});
+                        // Asegura que la música se repita aunque falle el atributo loop
+                        audio.addEventListener('ended', function() {
+                            audio.currentTime = 0;
+                            audio.play().catch(()=>{});
+                        });
                     }
 
                     const countdownInterval = setInterval(() => {
