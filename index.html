@@ -307,6 +307,9 @@
                     let running = false; // El juego inicia después del contador
                     let touchX = null;
 
+                    let ballTrail = [];
+                    const BALL_TRAIL_LENGTH = 8;
+
                     function resetPositions(servingToPlayer = false) {
                         const { w, h } = getGameSize();
                         player.w = paddleW(); player.h = paddleH();
@@ -333,6 +336,8 @@
                             ball.vy *= baseSpeed/speed;
                         }
                         aiTimerLastUpdate = Date.now();
+                        // Reinicia la estela cuando se reinicia la posición de la bola
+                        ballTrail = [];
                     }
 
                     function drawTable() {
@@ -411,7 +416,26 @@
                     }
 
                     function drawBall() {
+                        // Agrega la posición actual al inicio del trail
+                        ballTrail.unshift({ x: ball.x, y: ball.y });
+                        if (ballTrail.length > BALL_TRAIL_LENGTH) ballTrail.pop();
+                        // Dibuja la estela amarillo #ffe44d
+                        for (let i = ballTrail.length - 1; i >= 0; i--) {
+                            ctx.save();
+                            let t = i / BALL_TRAIL_LENGTH;
+                            let alpha = 0.18 + 0.22 * t;
+                            ctx.globalAlpha = alpha;
+                            ctx.fillStyle = '#ffe44d';
+                            ctx.shadowColor = '#ffe44d';
+                            ctx.shadowBlur = 16 * t;
+                            ctx.beginPath();
+                            ctx.arc(ballTrail[i].x + ball.size/2, ballTrail[i].y + ball.size/2, ball.size/2, 0, 2*Math.PI);
+                            ctx.fill();
+                            ctx.restore();
+                        }
+                        // Dibuja la bola principal
                         ctx.save();
+                        ctx.globalAlpha = 1;
                         ctx.fillStyle = "#fff";
                         ctx.shadowColor = "#ffe44d";
                         ctx.shadowBlur = 8;
@@ -586,6 +610,12 @@
 
                     function showEndScreen(playerWon) {
                         const pongContainer = document.getElementById('pong-container');
+                        // Detener la música al finalizar el juego
+                        const audio = document.getElementById('pong-audio');
+                        if (audio) {
+                            audio.pause();
+                            audio.currentTime = 0;
+                        }
                         let html = '';
                         if (playerWon) {
                             // Dialog box with background, image, title, text and button
