@@ -580,8 +580,12 @@
                         }
 
                         if (ball.y < 0) {
+                            // Reproduce sonido al anotar punto inmediatamente
+                            try {
+                                new Audio('ok.mp3').play();
+                            } catch(e){}
                             player.score++;
-                            if (player.score >= 5) {
+                            if (player.score >= 3) {
                                 running = false;
                                 setTimeout(() => showEndScreen(true), 700);
                             } else {
@@ -590,7 +594,7 @@
                         }
                         if (ball.y + ball.size > getGameSize().h) {
                             ai.score++;
-                            if (ai.score >= 5) {
+                            if (ai.score >= 3) {
                                 running = false;
                                 setTimeout(() => showEndScreen(false), 700);
                             } else {
